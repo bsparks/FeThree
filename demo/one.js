@@ -1,8 +1,10 @@
-import Transform from '../components/transform';
-import * as glMatrix from 'glMatrix';
+import GameObject from '../three/gameObject';
+import Game from '../three/game';
+import CameraSystem from '../systems/camera';
 
-window.foo = new Transform();
+let go = new GameObject('GameObject');
 
-window.glMatrix = glMatrix;
+window.go = go;
+let game = window.game = new Game();
 
-glMatrix.vec3.set(foo.position, 120, 33, 55);
+game.addSystem(new CameraSystem());

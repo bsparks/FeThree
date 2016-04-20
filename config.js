@@ -14,14 +14,15 @@ System.config({
   },
 
   map: {
-    "babel": "npm:babel-core@5.8.34",
-    "babel-runtime": "npm:babel-runtime@5.8.34",
-    "bsparks/FeCES": "github:bsparks/FeCES@master",
+    "babel": "npm:babel-core@5.8.38",
+    "babel-runtime": "npm:babel-runtime@5.8.38",
+    "bsparks/FeCES": "github:bsparks/FeCES@1.1.1",
     "core-js": "npm:core-js@1.2.6",
-    "glMatrix": "github:toji/gl-matrix@2.3.1",
-    "iron/ces": "github:bsparks/FeCES@master/ces",
+    "glMatrix": "github:toji/gl-matrix@2.3.2",
+    "iron/ces": "bsparks/FeCES/ces",
     "iron/core": "github:bsparks/FeCore@master/core",
-    "github:bsparks/FeCES@master": {
+    "three.js": "github:mrdoob/three.js@r76",
+    "github:bsparks/FeCES@1.1.1": {
       "fecore": "github:bsparks/FeCore@master"
     },
     "github:jspm/nodelibs-assert@0.1.0": {
@@ -39,7 +40,7 @@ System.config({
     "npm:assert@1.3.0": {
       "util": "npm:util@0.10.3"
     },
-    "npm:babel-runtime@5.8.34": {
+    "npm:babel-runtime@5.8.38": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:core-js@1.2.6": {
