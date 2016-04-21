@@ -12,7 +12,6 @@
   "jspm": {
     "dependencies": {
       "bsparks/FeCES": "github:bsparks/FeCES@^1.1.0",
-      "glMatrix": "github:toji/gl-matrix@^2.3.1",
       "three.js": "github:mrdoob/three.js@r76"
     },
     "devDependencies": {

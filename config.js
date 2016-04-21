@@ -18,7 +18,6 @@ System.config({
     "babel-runtime": "npm:babel-runtime@5.8.38",
     "bsparks/FeCES": "github:bsparks/FeCES@1.1.1",
     "core-js": "npm:core-js@1.2.6",
-    "glMatrix": "github:toji/gl-matrix@2.3.2",
     "iron/ces": "bsparks/FeCES/ces",
     "iron/core": "github:bsparks/FeCore@master/core",
     "three.js": "github:mrdoob/three.js@r76",

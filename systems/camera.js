@@ -1,4 +1,5 @@
 import System from 'iron/ces/system';
+import THREE from 'three.js';
 
 export default class CameraSystem extends System {
     addedToWorld(world) {
@@ -34,13 +35,13 @@ export default class CameraSystem extends System {
         super.update(dt);
         
         var world = this.world;
-        var cameras = world.getEntities('camera');
+        var cameras = world.getFamily('camera');
 
         if (cameras.length === 0) {
             return;
         }
 
-        cameras.sort(function (a, b) {
+        cameras = cameras.entities.toArray().sort(function (a, b) {
             if (a.getComponent('camera').priority > b.getComponent('camera').priority) {
                 return 1;
             }
