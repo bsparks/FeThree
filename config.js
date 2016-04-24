@@ -18,7 +18,7 @@ System.config({
     "babel-runtime": "npm:babel-runtime@5.8.38",
     "bsparks/FeCES": "github:bsparks/FeCES@1.1.1",
     "core-js": "npm:core-js@1.2.6",
-    "iron/ces": "bsparks/FeCES/ces",
+    "iron/ces": "github:bsparks/FeCES@1.1.1/ces",
     "iron/core": "github:bsparks/FeCore@master/core",
     "three.js": "github:mrdoob/three.js@r76",
     "github:bsparks/FeCES@1.1.1": {
