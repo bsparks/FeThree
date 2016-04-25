@@ -20,6 +20,7 @@ System.config({
     "core-js": "npm:core-js@1.2.6",
     "iron/ces": "github:bsparks/FeCES@1.1.1/ces",
     "iron/core": "github:bsparks/FeCore@master/core",
+    "javascript-state-machine": "npm:javascript-state-machine@2.3.5",
     "three.js": "github:mrdoob/three.js@r76",
     "github:bsparks/FeCES@1.1.1": {
       "fecore": "github:bsparks/FeCore@master"

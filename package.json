@@ -12,6 +12,7 @@
   "jspm": {
     "dependencies": {
       "bsparks/FeCES": "github:bsparks/FeCES@^1.1.0",
+      "javascript-state-machine": "npm:javascript-state-machine@^2.3.5",
       "three.js": "github:mrdoob/three.js@r76"
     },
     "devDependencies": {

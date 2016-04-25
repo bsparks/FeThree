@@ -2,6 +2,7 @@ import World from 'iron/ces/world';
 import Signal from 'iron/core/signal';
 import THREE from 'three.js';
 import GameObject from './gameObject';
+import StateMachine from 'javascript-state-machine';
 
 let updateClock = new THREE.Clock();
 
@@ -16,7 +17,7 @@ export default class Game extends World {
     constructor(domElement = document.body, {ambient = '0xffffff'} = {}) {
         super();
 
-        this.options = {ambient};
+        this.options = { ambient };
 
         this.scene = new THREE.Scene();
 
@@ -34,6 +35,13 @@ export default class Game extends World {
         window.addEventListener('resize', () => {
             this.renderer.setSize(window.innerWidth, window.innerHeight);
         }, false);
+
+        this.state = new StateMachine({
+            initial: 'preload',
+            events: [
+                { name: 'load', from: 'preload', to: 'loaded' }
+            ]
+        });
 
         this.init();
     }

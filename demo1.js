@@ -6,6 +6,9 @@ import LightSystem from './systems/light';
 import LightComponent from './components/light';
 import System from 'iron/ces/system';
 
+import StateMachine from 'javascript-state-machine';
+window.StateMachine = StateMachine;
+
 import THREE from 'three.js';
 window.THREE = THREE;
 
