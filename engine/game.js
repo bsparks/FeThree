@@ -2,7 +2,7 @@ import World from 'iron/ces/world';
 import Signal from 'iron/core/signal';
 import THREE from 'three.js';
 import GameObject from './gameObject';
-import StateMachine from 'javascript-state-machine';
+import {StateMachine} from 'javascript-state-machine';
 
 let updateClock = new THREE.Clock();
 
@@ -36,21 +36,60 @@ export default class Game extends World {
             this.renderer.setSize(window.innerWidth, window.innerHeight);
         }, false);
 
-        this.state = new StateMachine({
-            initial: 'preload',
+        this.state = StateMachine.create({
             events: [
-                { name: 'load', from: 'preload', to: 'loaded' }
-            ]
+                { name: 'startup', from: 'none', to: 'initializing'},
+                { name: 'init', from: 'initializing', to: 'initialized' },
+                { name: 'preload', from: 'initialized', to: 'loaded'},
+                { name: 'create', from: 'loaded', to: 'ready'}
+            ],
+            callbacks: {
+                onstartup: this._init.bind(this),
+                oninitialized: this._preload.bind(this),
+                onloaded: this._create.bind(this),
+                onready: this._start.bind(this)
+            }
         });
 
-        this.init();
+        this.init = new Signal();
+        this.create = new Signal();
+        this.preload = new Signal();
     }
 
-    init() {
+    run() {
+        this.state.startup();
+    }
+
+    _start() {
+        if (this.started) {
+            console.warn('loop already started!');
+            return;
+        }
+        this.started = true;
+        requestAnimationFrame(loop.bind(this));
+    }
+
+    _create() {
+        this.create.post(this);
+
+        this.state.create();
+    }
+
+    _preload() {
+        this.preload.post(this);
+
+        this.state.preload();
+    }
+
+    _init() {
+        this.init.post(this);
+
         if (this.options.ambient) {
             let ambientLight = new THREE.AmbientLight(this.options.ambient);
             this.scene.add(ambientLight);
         }
+
+        this.state.init();
     }
 
     addEntity(entity) {
@@ -76,15 +115,6 @@ export default class Game extends World {
         super.removeEntity(entity);
         this._onEntityRemoveChild(null, entity);
         this.scene.remove(entity);
-    }
-
-    start() {
-        if (this.started) {
-            console.warn('loop already started!');
-            return;
-        }
-        this.started = true;
-        requestAnimationFrame(loop.bind(this));
     }
 
     _onEntityAddChild(entity, child) {

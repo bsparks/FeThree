@@ -6,42 +6,43 @@ import LightSystem from './systems/light';
 import LightComponent from './components/light';
 import System from 'iron/ces/system';
 
-import StateMachine from 'javascript-state-machine';
+import {StateMachine} from 'javascript-state-machine';
 window.StateMachine = StateMachine;
 
 import THREE from 'three.js';
 window.THREE = THREE;
 
-let go = new GameObject('GameObject');
-go.addComponent('camera', new CameraComponent({ aspectRatio: window.innerWidth / window.innerHeight }));
-
-window.go = go;
 let game = window.game = new Game(document.body, { ambient: '#ffffff' });
 
-game.addSystem(new CameraSystem());
+game.create.add(function (game) {
+    let go = new GameObject('GameObject');
+    go.addComponent('camera', new CameraComponent({ aspectRatio: window.innerWidth / window.innerHeight }));
 
-let fooSystem = new System();
-fooSystem.addedToWorld = function(world) {
-    var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-    var cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
-    let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    // position the cube
-    cube.position.x = 0;
-    cube.position.y = 0;
-    cube.position.z = -15;
+    game.addSystem(new CameraSystem());
 
-    this.cube = cube;
+    let fooSystem = new System();
+    fooSystem.addedToWorld = function (world) {
+        var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+        var cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+        let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        // position the cube
+        cube.position.x = 0;
+        cube.position.y = 0;
+        cube.position.z = -15;
 
-    // add the cube to the scene
-    world.scene.add(cube);
-};
+        this.cube = cube;
 
-fooSystem.update = function(dt) {
-    this.cube.rotation.y += 1 * dt;
-};
+        // add the cube to the scene
+        world.scene.add(cube);
+    };
 
-game.addSystem(fooSystem);
+    fooSystem.update = function (dt) {
+        this.cube.rotation.y += 1 * dt;
+    };
 
-game.addEntity(go);
+    game.addSystem(fooSystem);
 
-game.start();
+    game.addEntity(go);
+});
+
+game.run();
