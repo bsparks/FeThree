@@ -12,13 +12,14 @@ window.StateMachine = StateMachine;
 import THREE from 'three.js';
 window.THREE = THREE;
 
-let game = window.game = new Game(document.body, { ambient: '#ffffff' });
+let game = window.game = new Game(document.body, { ambient: '#404040' });
 
 game.create.add(function (game) {
     let go = new GameObject('GameObject');
     go.addComponent('camera', new CameraComponent({ aspectRatio: window.innerWidth / window.innerHeight }));
 
     game.addSystem(new CameraSystem());
+    game.addSystem(new LightSystem());
 
     let fooSystem = new System();
     fooSystem.addedToWorld = function (world) {
@@ -34,6 +35,12 @@ game.create.add(function (game) {
 
         // add the cube to the scene
         world.scene.add(cube);
+
+        let light = new GameObject('light1');
+        light.addComponent('light', new LightComponent());
+        light.position.x = 5;
+
+        world.addEntity(light);
     };
 
     fooSystem.update = function (dt) {

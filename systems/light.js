@@ -7,7 +7,7 @@ export default class LightSystem extends System {
     addedToWorld(world) {
         super.addedToWorld(world);
 
-        world.entityAdded('light').add(function (entity) {
+        world.onEntityAdded('light').add(function (entity) {
             var lightData = entity.getComponent('light'),
                 light;
 

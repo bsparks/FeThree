@@ -17,24 +17,12 @@ export default class Game extends World {
     constructor(domElement = document.body, {ambient = '0xffffff'} = {}) {
         super();
 
-        this.options = { ambient };
-
-        this.scene = new THREE.Scene();
-
-        this.renderer = new THREE.WebGLRenderer({
-            precision: 'lowp'
-        });
-        this.renderer.setPixelRatio(1.0);
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+        this.options = { ambient, domElement };
 
         this.started = false;
 
-        domElement.appendChild(this.renderer.domElement);
-
-        window.addEventListener('resize', () => {
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
-        }, false);
+        this.scene = null;
+        this.renderer = null;
 
         this.state = StateMachine.create({
             events: [
@@ -82,8 +70,26 @@ export default class Game extends World {
     }
 
     _init() {
+        this.scene = new THREE.Scene();
+
+        this.renderer = new THREE.WebGLRenderer({
+            precision: 'lowp'
+        });
+        // TODO: the following set via options
+        this.renderer.setPixelRatio(1.0);
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        //this.renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+
+        this.options.domElement.appendChild(this.renderer.domElement);
+
+        window.addEventListener('resize', () => {
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+        }, false);
+
+        // now apply any user init
         this.init.post(this);
 
+        // TODO: should this be passed in via options or custom create method?
         if (this.options.ambient) {
             let ambientLight = new THREE.AmbientLight(this.options.ambient);
             this.scene.add(ambientLight);
