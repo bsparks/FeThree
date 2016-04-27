@@ -3,6 +3,7 @@ import Signal from 'iron/core/signal';
 import THREE from 'three.js';
 import GameObject from './gameObject';
 import {StateMachine} from 'javascript-state-machine';
+import AssetLoader from './assetLoader';
 
 let updateClock = new THREE.Clock();
 
@@ -42,6 +43,8 @@ export default class Game extends World {
         this.init = new Signal();
         this.create = new Signal();
         this.preload = new Signal();
+
+        this.assets = new AssetLoader();
     }
 
     run() {
@@ -64,9 +67,11 @@ export default class Game extends World {
     }
 
     _preload() {
+        // sync fire all preload methods queued up before start
         this.preload.post(this);
 
-        this.state.preload();
+        // now we should actually load the assets before transitioning
+        this.assets.load().then(() => this.state.preload());
     }
 
     _init() {

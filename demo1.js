@@ -16,6 +16,15 @@ window.THREE = THREE;
 
 let game = window.game = new Game(document.body, { ambient: '#404040' });
 
+game.init.add(function(game) {
+
+});
+
+game.preload.add(function(game) {
+    game.assets.add('image', 'crateTexture', 'assets/crate.gif');
+    game.assets.add('material', 'crateMaterial', 'assets/crateMaterial.json');
+});
+
 game.create.add(function (game) {
     let go = new GameObject('GameObject');
     go.addComponent('camera', new CameraComponent({ aspectRatio: window.innerWidth / window.innerHeight }));
@@ -31,7 +40,8 @@ game.create.add(function (game) {
             type: 'box',
             width: 4,
             height: 4,
-            depth: 4
+            depth: 4,
+            material: 'crateMaterial'
         }));
 
         // position the cube

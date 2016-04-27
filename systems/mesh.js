@@ -1,5 +1,6 @@
 import System from 'iron/ces/system';
 import THREE from 'three.js';
+import {material as materialCache} from '../engine/assetCache';
 
 export default class MeshSystem extends System {
     addedToWorld(world) {
@@ -12,7 +13,7 @@ export default class MeshSystem extends System {
                 material;
 
             if (meshData.material) {
-                // TODO: load from material cache
+                material = materialCache[meshData.material];
             }
 
             if (meshData.type === 'box') {
@@ -24,6 +25,21 @@ export default class MeshSystem extends System {
             } else if (meshData.type === 'cylinder') {
                 let {radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded, thetaStart, thetaLength} = meshData;
                 geometry = new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded, thetaStart, thetaLength);
+            } else if (meshData.type === 'plane') {
+                let {width = 1, height = 1, widthSegments, heightSegments} = meshData;
+                geometry = new THREE.PlaneGeometry(width, height, widthSegments, heightSegments);
+            } else if (meshData.type === 'circle') {
+                let {radius, segments, thetaStart, thetaLength} = meshData;
+                geometry = new THREE.CircleGeometry(radius, segments, thetaStart, thetaLength);
+            } else if (meshData.type === 'torus') {
+                let {radius, tube, radialSegments, tubularSegments, arc} = meshData;
+                geometry = new THREE.TorusGeometry(radius, tube, radialSegments, tubularSegments, arc);
+            } else if (meshData.type === 'torusknot') {
+                let {radius, tube, tubularSegments, radialSegments, p, q} = meshData;
+                geometry = new THREE.TorusKnotGeometry(radius, tube, tubularSegments, radialSegments, p, q);
+            } else if (meshData.type === 'ring') {
+                let {innerRadius, outerRadius, thetaSegments, phiSegments, thetaStart, thetaLength} = meshData;
+                geometry = new THREE.RingGeometry(innerRadius, outerRadius, thetaSegments, phiSegments, thetaStart, thetaLength);
             }
 
             if (!geometry) {
