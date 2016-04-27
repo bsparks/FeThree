@@ -5,6 +5,8 @@ import CameraComponent from './components/camera';
 import LightSystem from './systems/light';
 import LightComponent from './components/light';
 import System from 'iron/ces/system';
+import MeshComponent from './components/mesh';
+import MeshSystem from './systems/mesh';
 
 import {StateMachine} from 'javascript-state-machine';
 window.StateMachine = StateMachine;
@@ -20,21 +22,33 @@ game.create.add(function (game) {
 
     game.addSystem(new CameraSystem());
     game.addSystem(new LightSystem());
+    game.addSystem(new MeshSystem());
 
     let fooSystem = new System();
     fooSystem.addedToWorld = function (world) {
-        var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-        var cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
-        let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        let cube = new GameObject('Cube');
+        cube.addComponent('mesh', new MeshComponent({
+            type: 'box',
+            width: 4,
+            height: 4,
+            depth: 4
+        }));
+
         // position the cube
         cube.position.x = 0;
         cube.position.y = 0;
         cube.position.z = -15;
 
+        let cylinder = new GameObject('Cylinder');
+        cylinder.addComponent('mesh', new MeshComponent({type: 'cylinder'}));
+        cube.add(cylinder);
+        cylinder.position.x = 2;
+        cylinder.position.z = -375;
+
         this.cube = cube;
 
         // add the cube to the scene
-        world.scene.add(cube);
+        world.addEntity(cube);
 
         let light = new GameObject('light1');
         light.addComponent('light', new LightComponent());
