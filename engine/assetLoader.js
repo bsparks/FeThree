@@ -60,6 +60,9 @@ function bulkLoadMaterials(assets) {
 }
 
 function bulkLoadTextures(assets) {
+    // TODO: THREE TextureLoader expects a url to an image
+    // instead load JSON with additional parameters for the texture,
+    // include url or image cache key for image?
     let loader = new THREE.TextureLoader();
     let items = assets.map(function(asset) {
         let promise = new Promise((resolve, reject) => {

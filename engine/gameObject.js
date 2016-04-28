@@ -31,6 +31,6 @@ export default class GameObject extends EntityMixin(THREE.Object3D) {
             }
         });
 
-        super.add(...[child, ...more]);
+        super.remove(...[child, ...more]);
     }
 }

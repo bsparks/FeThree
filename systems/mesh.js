@@ -2,6 +2,8 @@ import System from 'iron/ces/system';
 import THREE from 'three.js';
 import {material as materialCache} from '../engine/assetCache';
 
+let meshRef = new WeakMap();
+
 export default class MeshSystem extends System {
     addedToWorld(world) {
         super.addedToWorld(world);
@@ -48,7 +50,14 @@ export default class MeshSystem extends System {
 
             mesh = new THREE.Mesh(geometry, material);
 
+            meshRef.set(entity, mesh);
             entity.add(mesh);
+        });
+
+        world.onEntityRemoved('mesh').add(function(entity) {
+           let mesh = meshRef.get(entity);
+           entity.remove(mesh);
+           meshRef.delete(entity);
         });
     }
 }
