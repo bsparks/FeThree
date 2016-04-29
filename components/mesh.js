@@ -1,6 +1,6 @@
 import Component from 'iron/ces/component';
 
-const MESH_TYPES = ['box', 'sphere', 'cylinder', 'plane', 'torus', 'torusknot', 'circle', 'asset'];
+const MESH_TYPES = ['box', 'sphere', 'cylinder', 'plane', 'torus', 'torusknot', 'circle', 'mesh'];
 
 const defaults = {
     type: 'box'

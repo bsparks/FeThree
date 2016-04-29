@@ -14,20 +14,29 @@ window.StateMachine = StateMachine;
 import THREE from 'three.js';
 window.THREE = THREE;
 
+import * as cache from './engine/assetCache';
+window.assetCache = cache;
+
 let game = window.game = new Game(document.body, { ambient: '#404040' });
 
-game.init.add(function(game) {
-
+game.init.add(function (game) {
+    game.entityCache = {};
 });
 
-game.preload.add(function(game) {
+game.preload.add(function (game) {
     game.assets.add('image', 'crateTexture', 'assets/crate.gif');
     game.assets.add('material', 'crateMaterial', 'assets/crateMaterial.json');
+    game.assets.add('mesh', 'bridge', 'assets/bridge.obj');
 });
 
 game.create.add(function (game) {
     let go = new GameObject('GameObject');
     go.addComponent('camera', new CameraComponent({ aspectRatio: window.innerWidth / window.innerHeight }));
+    go.position.z = 15;
+    go.position.y = 8;
+    go.rotateX(-0.5);
+
+    game.entityCache['mainCamera'] = go;
 
     game.addSystem(new CameraSystem());
     game.addSystem(new LightSystem());
@@ -36,24 +45,23 @@ game.create.add(function (game) {
     let fooSystem = new System();
     fooSystem.addedToWorld = function (world) {
         let cube = new GameObject('Cube');
+        /*
         cube.addComponent('mesh', new MeshComponent({
             type: 'box',
             width: 4,
             height: 4,
             depth: 4,
             material: 'crateMaterial'
-        }));
+        }));*/
 
         // position the cube
         cube.position.x = 0;
         cube.position.y = 0;
         cube.position.z = -15;
 
-        let cylinder = new GameObject('Cylinder');
-        cylinder.addComponent('mesh', new MeshComponent({type: 'cylinder'}));
-        cube.add(cylinder);
-        cylinder.position.x = 2;
-        cylinder.position.z = -375;
+        let bridge = new GameObject('bridge');
+        bridge.addComponent('mesh', new MeshComponent({ type: 'mesh', meshId: 'bridge' }));
+        world.addEntity(bridge);
 
         this.cube = cube;
 
@@ -63,8 +71,16 @@ game.create.add(function (game) {
         let light = new GameObject('light1');
         light.addComponent('light', new LightComponent());
         light.position.x = 5;
+        light.position.y = 10;
 
         world.addEntity(light);
+
+        let ground = new GameObject('ground');
+        ground.addComponent('mesh', new MeshComponent({type: 'plane', width: 10, height: 10, material: 'crateMaterial'}));
+        ground.rotation.x = -Math.PI / 2;
+        world.addEntity(ground);
+
+        game.entityCache['ground'] = ground;
     };
 
     fooSystem.update = function (dt) {
@@ -72,6 +88,18 @@ game.create.add(function (game) {
     };
 
     game.addSystem(fooSystem);
+
+    let helperSystem = new System();
+    helperSystem.addedToWorld = function (world) {
+        let gridHelper = new THREE.GridHelper(14, 1);
+        gridHelper.setColors(0x303030, 0x303030);
+        gridHelper.position.set(0, - 0.04, 0);
+        gridHelper.add(new THREE.AxisHelper(100));
+
+        world.scene.add(gridHelper);
+    };
+
+    game.addSystem(helperSystem);
 
     game.addEntity(go);
 });

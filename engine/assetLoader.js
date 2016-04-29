@@ -1,5 +1,11 @@
 import THREE from 'three.js';
-import {texture as textureCache, material as materialCache} from './assetCache';
+import './objLoader';
+import {
+    texture as textureCache,
+    material as materialCache,
+    mesh as meshCache,
+    geometry as geometryCache
+} from './assetCache';
 
 export default class AssetLoader {
     constructor() {
@@ -8,12 +14,14 @@ export default class AssetLoader {
             image: [],
             material: [],
             geometry: [],
-            sound: []
+            sound: [],
+            mesh: []
         };
 
         this._loaders = {
             texture: bulkLoadTextures,
-            material: bulkLoadMaterials
+            material: bulkLoadMaterials,
+            mesh: bulkLoadMeshes
         };
     }
 
@@ -37,7 +45,9 @@ export default class AssetLoader {
         let materialsLoad = this._loaders.texture(imageAssets)
             .then((textures) => this._loaders.material(this._assetsToLoad.material));
 
-        return Promise.all([materialsLoad]);
+        let meshLoad = this._loaders.mesh(this._assetsToLoad.mesh);
+
+        return Promise.all([materialsLoad, meshLoad]);
     }
 }
 
@@ -70,6 +80,40 @@ function bulkLoadTextures(assets) {
                 textureCache[asset.key] = texture;
                 resolve(texture);
             }, undefined, reject);
+        });
+
+        return promise;
+    });
+
+    return Promise.all(items);
+}
+
+function bulkLoadMeshes(assets) {
+    let jsonLoader = new THREE.JSONLoader(), // three.js js file
+        objLoader = new THREE.OBJLoader(); // .obj model
+
+    let items = assets.map(function(asset) {
+        let promise = new Promise((resolve, reject) => {
+            if (asset.assetUrl.indexOf('.js') > 0) {
+                jsonLoader.load(asset.assetUrl, function(geometry, materials) {
+                    geometryCache[geometry.uuid] = geometry;
+
+                    let mesh = new THREE.Mesh(geometry, materials);
+                    console.debug('load js model: ', geometry, materials, mesh);
+                    meshCache[asset.key] = mesh;
+                    resolve(mesh);
+                }, undefined, reject);
+            }
+
+            if (asset.assetUrl.indexOf('.obj') > 0) {
+                let path = asset.assetUrl.substring(0, asset.assetUrl.lastIndexOf('/') + 1),
+                    file = asset.assetUrl.substring(asset.assetUrl.lastIndexOf('/') + 1);
+                objLoader.setPath(path);
+                objLoader.load(file, function(mesh) {
+                    meshCache[asset.key] = mesh;
+                    resolve(mesh);
+                }, undefined, reject);
+            }
         });
 
         return promise;

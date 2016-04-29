@@ -1,6 +1,6 @@
 import System from 'iron/ces/system';
 import THREE from 'three.js';
-import {material as materialCache} from '../engine/assetCache';
+import {material as materialCache, mesh as meshCache} from '../engine/assetCache';
 
 let meshRef = new WeakMap();
 
@@ -42,6 +42,20 @@ export default class MeshSystem extends System {
             } else if (meshData.type === 'ring') {
                 let {innerRadius, outerRadius, thetaSegments, phiSegments, thetaStart, thetaLength} = meshData;
                 geometry = new THREE.RingGeometry(innerRadius, outerRadius, thetaSegments, phiSegments, thetaStart, thetaLength);
+            }
+
+            if (meshData.type === 'mesh') {
+                let {meshId} = meshData;
+                let mesh = meshCache[meshId];
+                if (mesh) {
+                    console.debug('mesh cache:', mesh);
+                    let clone = mesh.clone();
+                    meshRef.set(entity, clone);
+                    entity.add(clone);
+                } else {
+                    throw new Error('Mesh not found in cache! ' + meshId);
+                }
+                return;
             }
 
             if (!geometry) {
