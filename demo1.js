@@ -17,6 +17,9 @@ window.THREE = THREE;
 import * as cache from './engine/assetCache';
 window.assetCache = cache;
 
+import keys from './engine/input/keys';
+window.keys = keys;
+
 let game = window.game = new Game(document.body, { ambient: '#404040' });
 
 game.init.add(function (game) {
