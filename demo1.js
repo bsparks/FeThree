@@ -17,8 +17,7 @@ window.THREE = THREE;
 import * as cache from './engine/assetCache';
 window.assetCache = cache;
 
-import keys from './engine/input/keys';
-window.keys = keys;
+import KeyboardInputSystem from './input/keyboard';
 
 let game = window.game = new Game(document.body, { ambient: '#404040' });
 
@@ -40,6 +39,8 @@ game.create.add(function (game) {
     go.rotateX(-0.5);
 
     game.entityCache['mainCamera'] = go;
+    
+    window.keyboard = new KeyboardInputSystem(document.body);
 
     game.addSystem(new CameraSystem());
     game.addSystem(new LightSystem());
@@ -88,6 +89,10 @@ game.create.add(function (game) {
 
     fooSystem.update = function (dt) {
         this.cube.rotation.y += 1 * dt;
+        
+        if(window.keyboard.wasPressed('A')) {
+            console.debug('pressed!');
+        }
     };
 
     game.addSystem(fooSystem);
@@ -103,6 +108,8 @@ game.create.add(function (game) {
     };
 
     game.addSystem(helperSystem);
+    
+    game.addSystem(window.keyboard);
 
     game.addEntity(go);
 });
