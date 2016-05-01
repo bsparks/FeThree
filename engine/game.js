@@ -1,5 +1,6 @@
 import World from 'iron/ces/world';
 import Signal from 'iron/core/signal';
+import SignalBus from 'iron/core/signalBus';
 import THREE from 'three.js';
 import GameObject from './gameObject';
 import {StateMachine} from 'javascript-state-machine';
@@ -17,6 +18,8 @@ function loop() {
 export default class Game extends World {
     constructor(domElement = document.body, {ambient = '0xffffff'} = {}) {
         super();
+
+        this.events = new SignalBus();
 
         this.options = { ambient, domElement };
 

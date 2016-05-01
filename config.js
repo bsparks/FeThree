@@ -19,7 +19,7 @@ System.config({
     "bsparks/FeCES": "github:bsparks/FeCES@1.1.1",
     "core-js": "npm:core-js@1.2.6",
     "iron/ces": "github:bsparks/FeCES@1.1.1/ces",
-    "iron/core": "github:bsparks/FeCore@master/core",
+    "iron/core": "github:bsparks/FeCore@1.1.1/core",
     "javascript-state-machine": "npm:javascript-state-machine@2.3.5",
     "three.js": "github:mrdoob/three.js@r76",
     "github:bsparks/FeCES@1.1.1": {
@@ -47,7 +47,7 @@ System.config({
       "fs": "github:jspm/nodelibs-fs@0.1.2",
       "path": "github:jspm/nodelibs-path@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2",
-      "systemjs-json": "github:systemjs/plugin-json@0.1.0"
+      "systemjs-json": "github:systemjs/plugin-json@0.1.2"
     },
     "npm:inherits@2.0.1": {
       "util": "github:jspm/nodelibs-util@0.1.0"
