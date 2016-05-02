@@ -4,7 +4,8 @@ import {
     texture as textureCache,
     material as materialCache,
     mesh as meshCache,
-    geometry as geometryCache
+    geometry as geometryCache,
+    script as scriptCache
 } from './assetCache';
 
 export default class AssetLoader {
@@ -15,13 +16,15 @@ export default class AssetLoader {
             material: [],
             geometry: [],
             sound: [],
-            mesh: []
+            mesh: [],
+            script: []
         };
 
         this._loaders = {
             texture: bulkLoadTextures,
             material: bulkLoadMaterials,
-            mesh: bulkLoadMeshes
+            mesh: bulkLoadMeshes,
+            script: bulkLoadScripts
         };
     }
 
@@ -46,8 +49,10 @@ export default class AssetLoader {
             .then((textures) => this._loaders.material(this._assetsToLoad.material));
 
         let meshLoad = this._loaders.mesh(this._assetsToLoad.mesh);
+        
+        let scriptsLoad = this._loaders.script(this._assetsToLoad.script);
 
-        return Promise.all([materialsLoad, meshLoad]);
+        return Promise.all([materialsLoad, meshLoad, scriptsLoad]);
     }
 }
 
@@ -119,5 +124,17 @@ function bulkLoadMeshes(assets) {
         return promise;
     });
 
+    return Promise.all(items);
+}
+
+function bulkLoadScripts(assets) {
+    let items = assets.map(function(asset) {
+        let promise = new Promise((resolve, reject) => {
+            
+        });
+        
+        return promise;
+    });
+    
     return Promise.all(items);
 }

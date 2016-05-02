@@ -1,6 +1,12 @@
 import System from 'iron/ces/system';
 import {script as scriptCache} from '../engine/assetCache';
 
+function safeExec(method, fn, ...args) {
+    if (fn[method] && typeof fn[method] === 'function') {
+        return fn[method].call(fn, ...args);
+    }
+}
+
 export default class ScriptSystem extends System {
     constructor() {
 
@@ -8,7 +14,7 @@ export default class ScriptSystem extends System {
 
     addScript(scriptName, entity) {
         let componentName = `_script_${scriptName}`;
-        // script should be typeof Script
+        // script should be constructor function
         let script = scriptCache[scriptName];
         entity.addComponent(componentName, new script());
     }
@@ -21,20 +27,24 @@ export default class ScriptSystem extends System {
             let componentName = `_script_${scriptName}`;
             world.onEntityAdded(componentName).add(function(entity) {
                 let script = entity.getComponent(componentName);
-                script.exec('init');
+                safeExec('init', script);
             });
 
             world.onEntityRemoved(componentName).add(function(entity) {
                 let script = entity.getComponent(componentName);
-                script.exec('remove');
+                safeExec('remove', script);
             });
         }
     }
 
     update(dt) {
-        // for each we need to update
-        this.world.getFamily().forEach(function(entity) {
-
-        });
+        for(let scriptName in scriptCache) {
+            let componentName = `_script_${scriptName}`;
+            // for each we need to update
+            this.world.getFamily(componentName).forEach(function(entity) {
+                let script = entity.getComponent(componentName);
+                safeExec('update', script, dt);
+            });
+        }
     }
 }
