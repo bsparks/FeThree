@@ -49,7 +49,7 @@ export default class AssetLoader {
             .then((textures) => this._loaders.material(this._assetsToLoad.material));
 
         let meshLoad = this._loaders.mesh(this._assetsToLoad.mesh);
-        
+
         let scriptsLoad = this._loaders.script(this._assetsToLoad.script);
 
         return Promise.all([materialsLoad, meshLoad, scriptsLoad]);
@@ -130,11 +130,18 @@ function bulkLoadMeshes(assets) {
 function bulkLoadScripts(assets) {
     let items = assets.map(function(asset) {
         let promise = new Promise((resolve, reject) => {
-            
+            fetch(asset.assetUrl)
+                .then(function(response) {
+                    return response.text();
+                })
+                .then(function(text) {
+                    scriptCache[asset.key] = text;
+                    resolve(text);
+                });
         });
-        
+
         return promise;
     });
-    
+
     return Promise.all(items);
 }
