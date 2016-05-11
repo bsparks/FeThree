@@ -7,6 +7,7 @@ import LightComponent from './components/light';
 import System from 'iron/ces/system';
 import MeshComponent from './components/mesh';
 import MeshSystem from './systems/mesh';
+import ScriptSystem from './script/scriptSystem';
 
 import {StateMachine} from 'javascript-state-machine';
 window.StateMachine = StateMachine;
@@ -29,6 +30,8 @@ game.preload.add(function (game) {
     game.assets.add('image', 'crateTexture', 'assets/crate.gif');
     game.assets.add('material', 'crateMaterial', 'assets/crateMaterial.json');
     game.assets.add('mesh', 'bridge', 'assets/bridge.obj');
+    game.assets.add('script', 'TestController', 'assets/testController.js');
+    game.assets.add('script', 'test2', 'assets/script2.js');
 });
 
 game.create.add(function (game) {
@@ -39,9 +42,10 @@ game.create.add(function (game) {
     go.rotateX(-0.5);
 
     game.entityCache['mainCamera'] = go;
-    
+
     window.keyboard = new KeyboardInputSystem(document.body);
 
+    game.addSystem(new ScriptSystem());
     game.addSystem(new CameraSystem());
     game.addSystem(new LightSystem());
     game.addSystem(new MeshSystem());
@@ -65,6 +69,8 @@ game.create.add(function (game) {
 
         let bridge = new GameObject('bridge');
         bridge.addComponent('mesh', new MeshComponent({ type: 'mesh', meshId: 'bridge' }));
+        bridge.addScriptComponent('TestController');
+        bridge.addScriptComponent('test2');
         world.addEntity(bridge);
 
         this.cube = cube;
@@ -89,7 +95,7 @@ game.create.add(function (game) {
 
     fooSystem.update = function (dt) {
         this.cube.rotation.y += 1 * dt;
-        
+
         if(window.keyboard.wasPressed('A')) {
             console.debug('pressed!');
         }
@@ -108,7 +114,7 @@ game.create.add(function (game) {
     };
 
     game.addSystem(helperSystem);
-    
+
     game.addSystem(window.keyboard);
 
     game.addEntity(go);

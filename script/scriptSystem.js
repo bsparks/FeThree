@@ -8,17 +8,6 @@ function safeExec(method, fn, ...args) {
 }
 
 export default class ScriptSystem extends System {
-    constructor() {
-
-    }
-
-    addScript(scriptName, entity) {
-        let componentName = `_script_${scriptName}`;
-        // script should be constructor function
-        let script = scriptCache[scriptName];
-        entity.addComponent(componentName, new script());
-    }
-
     addedToWorld(world) {
         super.addedToWorld(world);
 

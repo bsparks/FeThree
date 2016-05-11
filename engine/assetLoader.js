@@ -38,7 +38,7 @@ export default class AssetLoader {
 
         let bank = this._assetsToLoad[assetType];
 
-        bank.push({key, assetUrl});
+        bank.push({ key, assetUrl });
     }
 
     load() {
@@ -60,9 +60,9 @@ function bulkLoadMaterials(assets) {
     let loader = new THREE.MaterialLoader();
     loader.setTextures(textureCache);
 
-    let items = assets.map(function(asset) {
+    let items = assets.map(function (asset) {
         let promise = new Promise((resolve, reject) => {
-            loader.load(asset.assetUrl, function(material) {
+            loader.load(asset.assetUrl, function (material) {
                 materialCache[asset.key] = material;
                 resolve(material);
             }, undefined, reject);
@@ -79,9 +79,9 @@ function bulkLoadTextures(assets) {
     // instead load JSON with additional parameters for the texture,
     // include url or image cache key for image?
     let loader = new THREE.TextureLoader();
-    let items = assets.map(function(asset) {
+    let items = assets.map(function (asset) {
         let promise = new Promise((resolve, reject) => {
-            loader.load(asset.assetUrl, function(texture) {
+            loader.load(asset.assetUrl, function (texture) {
                 textureCache[asset.key] = texture;
                 resolve(texture);
             }, undefined, reject);
@@ -97,10 +97,10 @@ function bulkLoadMeshes(assets) {
     let jsonLoader = new THREE.JSONLoader(), // three.js js file
         objLoader = new THREE.OBJLoader(); // .obj model
 
-    let items = assets.map(function(asset) {
+    let items = assets.map(function (asset) {
         let promise = new Promise((resolve, reject) => {
             if (asset.assetUrl.indexOf('.js') > 0) {
-                jsonLoader.load(asset.assetUrl, function(geometry, materials) {
+                jsonLoader.load(asset.assetUrl, function (geometry, materials) {
                     geometryCache[geometry.uuid] = geometry;
 
                     let mesh = new THREE.Mesh(geometry, materials);
@@ -114,7 +114,7 @@ function bulkLoadMeshes(assets) {
                 let path = asset.assetUrl.substring(0, asset.assetUrl.lastIndexOf('/') + 1),
                     file = asset.assetUrl.substring(asset.assetUrl.lastIndexOf('/') + 1);
                 objLoader.setPath(path);
-                objLoader.load(file, function(mesh) {
+                objLoader.load(file, function (mesh) {
                     meshCache[asset.key] = mesh;
                     resolve(mesh);
                 }, undefined, reject);
@@ -128,16 +128,34 @@ function bulkLoadMeshes(assets) {
 }
 
 function bulkLoadScripts(assets) {
-    let items = assets.map(function(asset) {
+    // TODO: cleaner?
+    // need to add one hook to global namespace in order to load scripts
+    window.iron = {
+        script: function (scriptFn) {
+            var me = document.currentScript;
+            var scriptName = me.getAttribute('data-iron-script');
+            //console.debug('iron script: ', scriptName, me);
+            scriptCache[scriptName] = scriptFn;
+        }
+    };
+
+    let items = assets.map(function (asset) {
         let promise = new Promise((resolve, reject) => {
-            fetch(asset.assetUrl)
-                .then(function(response) {
-                    return response.text();
-                })
-                .then(function(text) {
-                    scriptCache[asset.key] = text;
-                    resolve(text);
-                });
+            let script = document.createElement('script');
+            script.setAttribute('data-iron-script', asset.key);// = `iron_script_${asset.key}`;
+            script.type = `text/javascript`;
+            script.src = asset.assetUrl;
+
+            script.onload = function (e) {
+                //console.debug('script onload', e);
+                resolve();
+            };
+
+            script.onerror = function (err) {
+                reject(`Could not load script: ${err.target.src}`);
+            };
+
+            document.head.appendChild(script);
         });
 
         return promise;

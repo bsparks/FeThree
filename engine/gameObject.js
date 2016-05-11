@@ -1,6 +1,7 @@
 import THREE from 'three.js';
 import {EntityMixin} from 'iron/ces/entity';
 import Signal from 'iron/core/signal';
+import {script as scriptCache} from './assetCache';
 
 export default class GameObject extends EntityMixin(THREE.Object3D) {
     constructor(name = 'GameObject') {
@@ -10,6 +11,27 @@ export default class GameObject extends EntityMixin(THREE.Object3D) {
         this.onChildRemoved = new Signal();
 
         this.initEntity(name);
+    }
+
+    addScriptComponent(scriptName) {
+        let componentName = `_script_${scriptName}`;
+        // script should be constructor function
+        let scriptFn = scriptCache[scriptName];
+
+        let script = new scriptFn(this);
+
+        this.addComponent(componentName, script);
+    }
+
+    removeScriptComponent(scriptName) {
+        let componentName = `_script_${scriptName}`;
+
+        this.removeComponent(componentName);
+    }
+
+    getScriptComponent(scriptName) {
+        let componentName = `_script_${scriptName}`;
+        return this.getComponent(componentName);
     }
 
     add(child, ...more) {
